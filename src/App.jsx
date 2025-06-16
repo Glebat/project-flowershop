@@ -11,6 +11,9 @@ import CatalogueNews from './pages/CatalogueNews';
 import CatalogueSpringHits from './pages/CatalogueSpringHits';
 import CatalogueWedding from './pages/CatalogueWedding';
 import CatalogueExotic from './pages/CatalogueExotic';
+import AuthPage from './pages/AuthPage';
+import ProfilePage from './pages/ProfilePage';
+import CheckoutPage from './pages/CheckoutPage'; 
 
 function HomePage({ isCatalogVisible, setIsCatalogVisible, products, favorites, toggleFavorite, handleButtonClick, selectedCategory, addToCart }) {
   const navigate = useNavigate();
@@ -112,8 +115,20 @@ function HomePage({ isCatalogVisible, setIsCatalogVisible, products, favorites, 
   );
 }
 
-function CartPage({ cart, products, updateCartQuantity, removeFromCart }) {
+function CartPage({ cart, products, setCart }) {
   const navigate = useNavigate();
+
+  const updateCartQuantity = (productId, quantity) => {
+    if (quantity <= 0) {
+      const { [productId]: _, ...rest } = cart;
+      setCart(rest);
+    } else {
+      setCart(prev => ({
+        ...prev,
+        [productId]: quantity
+      }));
+    }
+  };
 
   if (Object.keys(cart).length === 0) {
     return (
@@ -173,7 +188,7 @@ function CartPage({ cart, products, updateCartQuantity, removeFromCart }) {
                     </div>
                     
                     <button
-                      onClick={() => removeFromCart(productId)}
+                      onClick={() => updateCartQuantity(productId, 0)}
                       className="text-gray-500 hover:text-red-500 transition-colors text-lg sm:text-xl"
                     >
                       ✕
@@ -192,7 +207,10 @@ function CartPage({ cart, products, updateCartQuantity, removeFromCart }) {
               return total + (parseInt(product.price) * quantity);
             }, 0)}₽
           </div>
-          <button className="w-full sm:w-auto bg-black text-white px-6 sm:px-8 py-2 sm:py-3 rounded-xl hover:bg-gray-800 transition-colors text-sm sm:text-base">
+          <button 
+            onClick={() => navigate('/checkout')}
+            className="w-full sm:w-auto bg-black text-white px-6 sm:px-8 py-2 sm:py-3 rounded-xl hover:bg-gray-800 transition-colors text-sm sm:text-base"
+          >
             Оформить заказ
           </button>
         </div>
@@ -405,8 +423,10 @@ function App() {
   };
 
   const toggleFavorite = (productId) => {
-    setFavorites(prev =>
-      prev.includes(productId) ? prev.filter(id => id !== productId) : [...prev, productId]
+    setFavorites(prev => 
+      prev.includes(productId)
+        ? prev.filter(id => id !== productId)
+        : [...prev, productId]
     );
   };
 
@@ -427,7 +447,8 @@ function App() {
 
   const updateCartQuantity = (productId, quantity) => {
     if (quantity <= 0) {
-      removeFromCart(productId);
+      const { [productId]: _, ...rest } = cart;
+      setCart(rest);
     } else {
       setCart(prev => ({
         ...prev,
@@ -436,96 +457,47 @@ function App() {
     }
   };
 
+  // Получаем массив товаров из корзины
+  const cartItems = Object.entries(cart).map(([productId, quantity]) => {
+    const product = products.find(p => p.id === parseInt(productId));
+    if (!product) return null;
+    // Удаляем все нецифровые символы из price и приводим к числу
+    const numericPrice = Number(String(product.price).replace(/[^0-9.]/g, ''));
+    return {
+      ...product,
+      price: numericPrice,
+      quantity: Number(quantity),
+    };
+  }).filter(Boolean);
+
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Header cartItemsCount={Object.values(cart).reduce((a, b) => a + b, 0)} />}>
-          <Route 
-            index
-            element={
-              <HomePage 
-                isCatalogVisible={isCatalogVisible}
-                setIsCatalogVisible={setIsCatalogVisible}
-                products={products}
-                favorites={favorites}
-                toggleFavorite={toggleFavorite}
-                handleButtonClick={handleButtonClick}
-                selectedCategory={selectedCategory}
-                addToCart={addToCart}
-              />
-            } 
-          />
-          <Route 
-            path="catalogue/news" 
-            element={
-              <CatalogueNews 
-                products={products}
-                favorites={favorites}
-                toggleFavorite={toggleFavorite}
-                addToCart={addToCart}
-              />
-            }
-          />
-          <Route 
-            path="catalogue/springhits" 
-            element={
-              <CatalogueSpringHits 
-                products={products}
-                favorites={favorites}
-                toggleFavorite={toggleFavorite}
-                addToCart={addToCart}
-              />
-            }
-          />
-          <Route 
-            path="catalogue/wedding" 
-            element={
-              <CatalogueWedding 
-                products={products}
-                favorites={favorites}
-                toggleFavorite={toggleFavorite}
-                addToCart={addToCart}
-              />
-            }
-          />
-          <Route 
-            path="catalogue/exotic" 
-            element={
-              <CatalogueExotic 
-                products={products}
-                favorites={favorites}
-                toggleFavorite={toggleFavorite}
-                addToCart={addToCart}
-              />
-            }
-          />
-          <Route 
-            path="favorites" 
-            element={
-              <FavoritesPage 
-                favorites={favorites} 
-                    toggleFavorite={toggleFavorite}
-                products={products}
-                addToCart={addToCart}
-              />
-            } 
-          />
-          <Route 
-            path="cart" 
-            element={
-              <CartPage 
-                cart={cart}
-                products={products}
-                updateCartQuantity={updateCartQuantity}
-                removeFromCart={removeFromCart}
-              />
-            }
-          />
+          <Route index element={
+            <HomePage
+              isCatalogVisible={isCatalogVisible}
+              setIsCatalogVisible={setIsCatalogVisible}
+              products={products}
+              favorites={favorites}
+              toggleFavorite={toggleFavorite}
+              handleButtonClick={handleButtonClick}
+              selectedCategory={selectedCategory}
+              addToCart={addToCart}
+            />
+          } />
+          <Route path="favorites" element={<FavoritesPage products={products} favorites={favorites} toggleFavorite={toggleFavorite} addToCart={addToCart} />} />
+          <Route path="cart" element={<CartPage products={products} cart={cart} setCart={setCart} />} />
           <Route path="feedback" element={<FeedbackPage />} />
-          <Route path="profile" element={<div>Страница профиля</div>} />
+          <Route path="catalogue/news" element={<CatalogueNews products={products} favorites={favorites} toggleFavorite={toggleFavorite} addToCart={addToCart} />} />
+          <Route path="catalogue/springhits" element={<CatalogueSpringHits products={products} favorites={favorites} toggleFavorite={toggleFavorite} addToCart={addToCart} />} />
+          <Route path="catalogue/wedding" element={<CatalogueWedding products={products} favorites={favorites} toggleFavorite={toggleFavorite} addToCart={addToCart} />} />
+          <Route path="catalogue/exotic" element={<CatalogueExotic products={products} favorites={favorites} toggleFavorite={toggleFavorite} addToCart={addToCart} />} />
+          <Route path="auth" element={<AuthPage />} />
+          <Route path="profile" element={<ProfilePage />} />
+          <Route path="checkout" element={<CheckoutPage cart={cartItems} />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Route>
-        <Route path="/404" element={<NotFoundPage />} />
-        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Router>
   );

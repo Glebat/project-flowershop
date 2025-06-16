@@ -5,3 +5,8 @@
     display: none;
 }
 
+/* Скрываем caret (курсор ввода) глобально, кроме input, textarea и contenteditable */
+body *:not(input):not(textarea):not([contenteditable="true"]) {
+  caret-color: transparent !important;
+}
+
