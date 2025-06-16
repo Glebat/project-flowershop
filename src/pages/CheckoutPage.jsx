@@ -36,12 +36,12 @@ const CheckoutPage = ({ cart = [] }) => {
 
   if (!cart.length) {
     return (
-      <div className="bg-[#F5F5F8] min-h-[calc(100vh-200px)] flex items-center justify-center">
-        <div className="bg-white rounded-3xl p-8 shadow-md text-center">
+      <div className="bg-[#F5F5F8] min-h-[calc(100vh-200px)] flex items-center justify-center px-2 sm:px-4">
+        <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-md text-center w-full max-w-md">
           <div className="text-2xl font-light mb-4">Ваша корзина пуста</div>
           <button
             onClick={() => navigate('/cart')}
-            className="bg-black text-white rounded-xl px-8 py-3 text-base font-medium hover:bg-gray-800 transition-colors"
+            className="bg-black text-white rounded-xl px-8 py-3 text-base font-medium hover:bg-gray-800 transition-colors w-full"
           >
             Перейти в корзину
           </button>
@@ -51,12 +51,12 @@ const CheckoutPage = ({ cart = [] }) => {
   }
 
   return (
-    <div className="bg-[#F5F5F8] min-h-[calc(100vh-200px)] py-8 px-2 sm:px-4">
-      <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-6">
+    <div className="bg-[#F5F5F8] min-h-[calc(100vh-200px)] py-6 px-2 sm:px-4">
+      <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-6 md:gap-8">
         {/* Левая колонка — форма */}
         <form
           onSubmit={handleSubmit}
-          className="flex-1 bg-white rounded-3xl p-6 md:p-8 shadow-md mb-6 md:mb-0"
+          className="flex-1 bg-white rounded-3xl p-4 sm:p-6 md:p-8 shadow-md mb-6 md:mb-0 w-full"
         >
           <div className="grid grid-cols-1 gap-4">
             <input
@@ -64,7 +64,7 @@ const CheckoutPage = ({ cart = [] }) => {
               value={formData.name}
               onChange={handleChange}
               placeholder="Имя"
-              className="px-4 py-2 rounded-lg bg-[#F5F5F8] border border-[#E8E9ED] focus:outline-none"
+              className="px-4 py-3 rounded-lg bg-[#F5F5F8] border border-[#E8E9ED] focus:outline-none w-full text-base"
               required
             />
             <input
@@ -72,7 +72,7 @@ const CheckoutPage = ({ cart = [] }) => {
               value={formData.phone}
               onChange={handleChange}
               placeholder="Телефон"
-              className="px-4 py-2 rounded-lg bg-[#F5F5F8] border border-[#E8E9ED] focus:outline-none"
+              className="px-4 py-3 rounded-lg bg-[#F5F5F8] border border-[#E8E9ED] focus:outline-none w-full text-base"
               required
             />
             <input
@@ -80,7 +80,7 @@ const CheckoutPage = ({ cart = [] }) => {
               value={formData.email}
               onChange={handleChange}
               placeholder="Email"
-              className="px-4 py-2 rounded-lg bg-[#F5F5F8] border border-[#E8E9ED] focus:outline-none"
+              className="px-4 py-3 rounded-lg bg-[#F5F5F8] border border-[#E8E9ED] focus:outline-none w-full text-base"
               required
             />
             <input
@@ -88,24 +88,24 @@ const CheckoutPage = ({ cart = [] }) => {
               value={formData.address}
               onChange={handleChange}
               placeholder="Адрес доставки"
-              className="px-4 py-2 rounded-lg bg-[#F5F5F8] border border-[#E8E9ED] focus:outline-none"
+              className="px-4 py-3 rounded-lg bg-[#F5F5F8] border border-[#E8E9ED] focus:outline-none w-full text-base"
               required
             />
-            <div className="flex gap-4">
+            <div className="flex flex-col sm:flex-row gap-4">
               <input
                 name="date"
                 value={formData.date}
                 onChange={handleChange}
                 placeholder="дд.мм.гггг"
                 type="date"
-                className="flex-1 px-4 py-2 rounded-lg bg-[#F5F5F8] border border-[#E8E9ED] focus:outline-none"
+                className="flex-1 px-4 py-3 rounded-lg bg-[#F5F5F8] border border-[#E8E9ED] focus:outline-none text-base"
                 required
               />
               <select
                 name="time"
                 value={formData.time}
                 onChange={handleChange}
-                className="flex-1 px-4 py-2 rounded-lg bg-[#F5F5F8] border border-[#E8E9ED] focus:outline-none"
+                className="flex-1 px-4 py-3 rounded-lg bg-[#F5F5F8] border border-[#E8E9ED] focus:outline-none text-base"
                 required
               >
                 <option value="">Выберите время</option>
@@ -121,7 +121,7 @@ const CheckoutPage = ({ cart = [] }) => {
               value={formData.comment}
               onChange={handleChange}
               placeholder="Комментарий к заказу"
-              className="px-4 py-2 rounded-lg bg-[#F5F5F8] border border-[#E8E9ED] focus:outline-none min-h-[60px]"
+              className="px-4 py-3 rounded-lg bg-[#F5F5F8] border border-[#E8E9ED] focus:outline-none min-h-[60px] w-full text-base"
             />
           </div>
           <button
@@ -135,7 +135,7 @@ const CheckoutPage = ({ cart = [] }) => {
         {/* Правая колонка */}
         <div className="flex flex-col gap-6 w-full md:w-[370px]">
           {/* Корзина */}
-          <div className="bg-white rounded-3xl p-6 shadow-md">
+          <div className="bg-white rounded-3xl p-4 sm:p-6 shadow-md">
             <div className="text-lg font-medium mb-4">Ваш заказ</div>
             <div className="space-y-4 mb-4">
               {cart.map((item) => (
@@ -169,7 +169,7 @@ const CheckoutPage = ({ cart = [] }) => {
             </div>
           </div>
           {/* Информация о доставке */}
-          <div className="bg-white rounded-3xl p-6 shadow-md text-sm">
+          <div className="bg-white rounded-3xl p-4 sm:p-6 shadow-md text-sm">
             <div className="font-medium mb-2">Информация о доставке</div>
             <ul className="list-disc pl-5 space-y-1">
               <li>Доставка осуществляется ежедневно с 9:00 до 21:00</li>
